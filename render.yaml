@@ -1,0 +1,24 @@
+services:
+  - type: worker
+    name: swarmcore
+    runtime: node
+    buildCommand: |
+      npm install -g openclaw@latest
+      curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
+      pip install python-telegram-bot httpx --break-system-packages
+    startCommand: node swarm_gateway.js
+    envVars:
+      - key: TELEGRAM_TOKEN
+        sync: false
+      - key: OLLAMA_API_KEY
+        sync: false
+      - key: GROK_API_KEY
+        sync: false
+      - key: BRAIN_PROVIDER
+        value: ollama
+      - key: DEFAULT_MODEL
+        value: kimi-k2.5:cloud
+      - key: OLLAMA_BASE_URL
+        value: https://api.ollama.com
+      - key: NODE_ENV
+        value: production

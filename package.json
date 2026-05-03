@@ -1,0 +1,13 @@
+{
+  "name": "swarmcore",
+  "version": "1.0.0",
+  "description": "Multi-agent swarm: OpenClaw + NemoClaw + Hermes via Telegram",
+  "main": "swarm_gateway.js",
+  "scripts": {
+    "start": "node swarm_gateway.js",
+    "setup": "bash install_agents.sh"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
