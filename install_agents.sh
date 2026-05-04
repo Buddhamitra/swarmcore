@@ -60,4 +60,3 @@ echo "======================================"
 echo "OpenClaw: $(which openclaw 2>/dev/null || echo 'check PATH')"
 echo "Hermes:   $(which hermes 2>/dev/null || echo 'check PATH')"
 echo "uv:       $(which uv 2>/dev/null || echo 'check PATH')"
-
