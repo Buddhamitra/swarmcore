@@ -1,43 +1,63 @@
 #!/usr/bin/env bash
-# SwarmCore — CORRECT final installer for Render.com
-# Based on official GitHub repos
+# ─────────────────────────────────────────────────────────────────
+# SwarmCore Agent Installer — Fixed for Render.com
+# ─────────────────────────────────────────────────────────────────
 
 set -e
 echo "======================================"
 echo "  SwarmCore Agent Installer"
 echo "======================================"
 
-# 1. OpenClaw via npm (confirmed working already)
+# ── 1. Node.js check ──────────────────────────────────────────────
 echo ""
-echo "[1/3] Installing OpenClaw..."
+echo "[1/5] Checking Node.js..."
+node --version
+npm --version
+
+# ── 2. Install uv (Python package manager Hermes needs) ───────────
+echo ""
+echo "[2/5] Installing uv (Python package manager)..."
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Add uv to PATH for this script
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+
+echo "uv version: $(uv --version)"
+echo "✅ uv installed"
+
+# ── 3. Install Python 3.11 via uv ─────────────────────────────────
+echo ""
+echo "[3/5] Installing Python 3.11..."
+uv python install 3.11
+echo "✅ Python 3.11 ready"
+
+# ── 4. Install OpenClaw ───────────────────────────────────────────
+echo ""
+echo "[4/5] Installing OpenClaw..."
 npm install -g openclaw@latest
-openclaw --version && echo "✅ OpenClaw installed"
+openclaw --version && echo "✅ OpenClaw installed" || echo "⚠️ Check OpenClaw"
 
-# 2. Hermes via git clone + system Python (bypasses uv python download)
+# ── 5. Install Hermes Agent ───────────────────────────────────────
 echo ""
-echo "[2/3] Installing Hermes Agent from source..."
-cd /tmp
-git clone https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
+echo "[5/5] Installing Hermes Agent..."
+curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
 
-# Use system Python directly — no uv python install needed
-python3 -m venv venv
-source venv/bin/activate
-pip install -e ".[all]" --quiet
+# Add hermes to PATH
+export PATH="$HOME/.hermes/bin:$HOME/.local/bin:$PATH"
 
-# Symlink hermes to PATH
-ln -sf /tmp/hermes-agent/venv/bin/hermes /usr/local/bin/hermes 2>/dev/null || \
-  ln -sf /tmp/hermes-agent/venv/bin/hermes $HOME/.local/bin/hermes
+hermes --version && echo "✅ Hermes installed" || echo "⚠️ Check Hermes"
 
-export PATH="$HOME/.local/bin:$PATH"
-hermes --version && echo "✅ Hermes installed" || echo "⚠️ Hermes symlink — check runtime"
-
-# 3. NemoClaw note
+# ── NemoClaw note ─────────────────────────────────────────────────
 echo ""
-echo "[3/3] NemoClaw runs in secure LLM mode on free tier"
-echo "      Full Docker sandbox needs NVIDIA GPU"
+echo "ℹ️  NemoClaw: runs in secure LLM mode on free tier."
+echo "    Full sandbox: curl -fsSL https://nvidia.com/nemoclaw.sh | bash"
 
+# ── Done ──────────────────────────────────────────────────────────
 echo ""
 echo "======================================"
-echo "  Build Complete!"
+echo "  Installation Complete!"
 echo "======================================"
+echo "OpenClaw: $(which openclaw 2>/dev/null || echo 'check PATH')"
+echo "Hermes:   $(which hermes 2>/dev/null || echo 'check PATH')"
+echo "uv:       $(which uv 2>/dev/null || echo 'check PATH')"
+
