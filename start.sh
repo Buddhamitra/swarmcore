@@ -1,14 +1,11 @@
 #!/bin/bash
+ollama serve & 
+sleep 5
 
-# Start Ollama in background
-ollama serve &
-sleep 10
+echo "Pulling stable models..."
+# Using standard names that are small enough for Render's 512MB RAM
+ollama pull llama3.2:1b
+ollama pull tinydolphin
 
-# Pull the models for your swarm
-echo "Pulling models..."
-ollama pull open-orca # Or your preferred model for OpenClaw
-ollama pull nemo      # For NemoClaw security
-ollama pull hermes
-
-# Start the Python Telegram bridge
+echo "Starting Trident Core..."
 python main.py
