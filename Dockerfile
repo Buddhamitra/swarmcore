@@ -1,7 +1,10 @@
 FROM python:3.10-slim
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y curl
+# Install system dependencies + zstd (required by Ollama)
+RUN apt-get update && apt-get install -y \
+    curl \
+    zstd \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
@@ -19,4 +22,3 @@ RUN chmod +x start.sh
 EXPOSE 8080
 
 CMD ["./start.sh"]
-
